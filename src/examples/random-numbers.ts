@@ -1,43 +1,26 @@
 import { defer, mergeMap, Observable, Observer, of } from "rxjs";
+import { subscribeNTimes, subscribeObservableFunctionsNTimes } from "../utils/utils";
 
-const generateRandomNumbers = (length: number): number[] => {
+const ARRAY_LEN = 5;
+
+const generateRandomIntNumbers = (length: number): number[] => {
     return Array.from({ length }, () => Math.floor(Math.random() * 100));
 }
 
 const getRandomNumbersCold = (): Observable<number[]> => {
     return of(1).pipe(
-        mergeMap(()=>of(generateRandomNumbers(5)))
+        mergeMap(()=>of(generateRandomIntNumbers(ARRAY_LEN)))
     )
 }
 const getRandomNumbersCold2 = (): Observable<number[]> => {
-    return defer(()=>of(generateRandomNumbers(5)));
+    return defer(()=>of(generateRandomIntNumbers(ARRAY_LEN)));
 }
 const getRandomNumbersHot = (): Observable<number[]> => {
-    return of(generateRandomNumbers(5));
+    return of(generateRandomIntNumbers(ARRAY_LEN));
 }
 
-const observer  = (observable: string): Observer<any> => ({
-    next: (value) => console.log(value, observable),
-    complete: () => console.log("complete"),
-    error: (error) => console.error(error),
-})
+export const executeRandomNumbersObservables = (n = 3) => {
+    const observablesToSubscribe: (() => Observable<any>)[] = [getRandomNumbersCold, getRandomNumbersCold2, getRandomNumbersHot];
 
-const subscribeNTimes = (observable: Observable<any>, n: number, name: string) => {
-    for (let i = 0; i < n; i++) {
-        observable.subscribe(observer(name));
-      }
+    subscribeObservableFunctionsNTimes(observablesToSubscribe, n);
 }
-
-const main = () => {
-    const n = 3;
-
-    const cold1$  = getRandomNumbersCold();
-    const cold2$  = getRandomNumbersCold2();
-    const hot$  = getRandomNumbersHot();
-
-    subscribeNTimes(cold1$, n, "c1");
-    subscribeNTimes(cold2$, n, "c2");
-    subscribeNTimes(hot$, n, "h");
-}
-
-main();
