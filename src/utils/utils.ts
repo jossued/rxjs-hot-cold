@@ -1,6 +1,6 @@
 import { Observable, Observer } from "rxjs";
 
-export const observer  = (observable: string): Observer<any> => ({
+export const observer  = (observable?: string): Observer<any> => ({
     next: (value) => console.log(value, observable),
     complete: () => console.log("complete"),
     error: (error) => console.error(error),

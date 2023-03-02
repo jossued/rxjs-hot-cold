@@ -1,4 +1,5 @@
-import { defer, mergeMap, Observable, Observer, of } from "rxjs";
+import { defer, Observable, Observer, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { subscribeNTimes, subscribeObservableFunctionsNTimes } from "../utils/utils";
 
 const ARRAY_LEN = 5;
@@ -9,11 +10,11 @@ const generateRandomIntNumbers = (length: number): number[] => {
 
 const getRandomNumbersCold = (): Observable<number[]> => {
     return of(1).pipe(
-        mergeMap(()=>of(generateRandomIntNumbers(ARRAY_LEN)))
+        mergeMap(() => of(generateRandomIntNumbers(ARRAY_LEN)))
     )
 }
 const getRandomNumbersCold2 = (): Observable<number[]> => {
-    return defer(()=>of(generateRandomIntNumbers(ARRAY_LEN)));
+    return defer(() => of(generateRandomIntNumbers(ARRAY_LEN)));
 }
 const getRandomNumbersHot = (): Observable<number[]> => {
     return of(generateRandomIntNumbers(ARRAY_LEN));
